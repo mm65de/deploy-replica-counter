@@ -1,0 +1,18 @@
+services:
+    init:
+        image: ubuntu:latest
+        command: bash -c 'if [ -f /data/hosts.txt ] ; then rm /data/hosts.txt ; fi'
+        volumes:
+            - mydata:/data
+    app:
+        image: ubuntu:latest
+        depends_on:
+            - init
+        command: bash -c "echo $$HOSTNAME >> /data/hosts.txt  &&  HOSTID=`grep -n -m 1 ^$$HOSTNAME$ /data/hosts.txt | sed 's/:.*//g' ` && echo HOSTID = $$HOSTID "
+        deploy: 
+            replicas: 5
+        volumes:
+            - mydata:/data
+volumes:
+    mydata:
+
